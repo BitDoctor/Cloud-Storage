@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Image Viewer</title>
+	<link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+	<script type="text/javascript">
+		var Preview = function(e){
+					
+
+					var dropzone = document.getElementById('fileSelector');
+					dropzone.className = 'dropzone dropped';
+					var files = e.target.files || e.dataTransfer.files;
+					var imgPreview = document.getElementById("imgPreview");
+	            	imgPreview.innerHTML = "";
+	            	for (var i = 0; i < files.length; i++) {
+	            		var file = files[i];
+	            		if (file.type.indexOf("image") == 0) {
+		            		var reader = new FileReader();
+							reader.onload = (function(e){
+								var img = document.createElement("IMG");
+				                img.height = "100";
+			                    img.width = "100";
+			                    img.src = e.target.result;
+			                    imgPreview.appendChild(img);
+			                    img.onclick = function() {
+			                    	Canvas.displayImage(img.src);
+			                    }
+		                	})
+							reader.readAsDataURL(file);
+						} else {
+							alert(file.name + " is not an image file");
+						}
+					
+				}
+			}
+	</script>
+
+
+	<div class="dropzone" id="fileSelector">
+		<h1>Drag and Drop</h1>
+		<h2>or</h2>
+		<label for="files"><strong>Choose images </strong><span>to upload</span></label>
+		<form action="/" method="POST" enctype="multipart/form-data">
+		<input id="files" type="file" value="Upload" accept="image/*">
+		<input type="submit" value="submit">
+		</form>
+	</div>
+	<div id="imgPreview"></div>
+	<div id="canvasWrapper">
+		<canvas id="DisplayWindow" width="861" height="500"></canvas>		
+	</div>
+
+	<script type="text/javascript">
+		(function() {
+			var dropzone = document.getElementById('fileSelector');
+			dropzone.ondrop = function(e) {
+				e.preventDefault();
+				this.className = 'dropzone dropped';
+				Preview(e);
+			}
+			dropzone.ondragover = function(){
+				this.className = 'dropzone dragover';
+			return false
+			}
+			dropzone.ondragleave = function(){
+				this.className = 'dropzone';
+			return false
+			}
+		}());
+	</script>
+	<script type="text/javascript">
+			var Canvas = document.getElementById("DisplayWindow");
+			var ctx = Canvas.getContext("2d");
+
+			Canvas.loadImagefromPath = function(path){
+				// #1 load image into memory
+
+				// #2 draw image to context
+			}
+			Canvas.displayImage = function(path){
+				var img = new Image();
+				img.src = path;
+				var scale = 1.1;
+				//clear the canvas for redrawing
+				ctx.setTransform(1, 0, 0, 1, 0, 0);
+				ctx.clearRect(0, 0, Canvas.width, Canvas.height);
+				// drawImage(image, starting x, starting y, width, height)
+				ctx.drawImage(img,((Canvas.width - (img.width*scale)) / 2),((Canvas.height - (img.height*scale)) / 2),img.width*scale,img.height*scale);
+				var idata = ctx.getImageData(0,0,img.width,img.height);
+
+				var factor = 2;
+				var w = img.width * factor;
+				var h = img.height * factor;
+				var imgData = ctx.createImageData(w, h);
+				var i,j,k;
+				for(i=0;i<imgData.data.length; i+=4){
+					
+				}
+				console.log(imgData);
+				//
+				// here idata.data[(y*img.width + x)*4] is the red value
+				// of pixel (x, y), followed by green, blue and alpha
+				//
+
+			}
+	</script>
+</body>
+</html>
